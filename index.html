@@ -1,74 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WiFi/IoT Deployment Planner</title>
+    <title>OptiNetX - Workspace</title>
+    <!-- Standard realistic font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div id="ui-container">
-        <div class="panel header-panel">
-            <h1>Deployment Planner</h1>
-            <p>Model physical spaces and simulate dynamic network hardware topography.</p>
-        </div>
-        <div class="panel controls-panel">
-            <div class="tool-modes">
-                <button id="modeDragBtn" class="btn btn-outline active">Pan / Move</button>
-                <button id="modeDrawBtn" class="btn btn-outline">Draw Region</button>
-            </div>
-
-            <button id="addRouterBtn" class="btn btn-primary">Drop Router Node</button>
-            <button id="clearRoutersBtn" class="btn btn-danger">Clear Project</button>
-            <button id="fillAreaBtn" class="btn btn-success" style="display:none;">Auto-Deploy to Region</button>
-
-            <div class="slider-container">
-                <label for="freqSelect">Operating Frequency Band</label>
-                <select id="freqSelect" class="form-select">
-                    <option value="2.4">2.4 GHz (Long Range, High Interference)</option>
-                    <option value="5">5 GHz (Short Range, Low Interference)</option>
-                </select>
-
-                <label for="radiusSlider">Hardware Base Signal Power</label>
-                <input type="range" id="radiusSlider" min="100" max="1500" value="500">
-            </div>
-
-            <div class="router-list-panel">
-                <h4>Active Deployment Nodes</h4>
-                <div id="routerListContainer" class="router-list-container">
-                    <!-- JS driven list -->
+    <div class="app-layout">
+        <!-- Premium Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+                </div>
+                <div>
+                    <h1>OptiNetX</h1>
+                    <p class="subtitle">Premium Network Planner</p>
                 </div>
             </div>
 
-            <div class="stats-panel">
-                <h4>Coverage Snapshot</h4>
-                <div class="stat-row">Optimal Signal: <span id="statOptimal" class="optimal-text">0%</span></div>
-                <div class="stat-row">Weak Signal: <span id="statWeak" class="weak-text">0%</span></div>
-                <div class="stat-row">Interference: <span id="statInterfere" class="interference-text">0%</span></div>
-                <div class="stat-row">Dead Zone: <span id="statDead" class="dead-text">100%</span></div>
+            <div class="nav-tabs">
+                <button id="tabPlanning" class="tab-btn active">Design Mode</button>
+                <button id="tabDeployment" class="tab-btn">Deployment</button>
             </div>
 
-            <div class="legend">
-                <div class="legend-item"><span class="color-box optimal"></span> Optimal Connection</div>
-                <div class="legend-item"><span class="color-box weak"></span> Weak Connection</div>
-                <div class="legend-item"><span class="color-box interference"></span> Interference Zones</div>
-                <div class="legend-item"><span class="color-box dead"></span> No Connection</div>
+            <!-- Planning View Panel -->
+            <div id="viewPlanning" class="view-panel active">
+                <div class="panel glass-panel">
+                    <h3>Map Actions</h3>
+                    <div class="btn-group">
+                        <button id="modeDragBtn" class="btn btn-outline active">Pan Map</button>
+                        <button id="modeDrawBtn" class="btn btn-outline">Draw Region</button>
+                    </div>
+                    
+                    <hr class="soft-hr">
+
+                    <button id="addRouterBtn" class="btn btn-secondary mt-2">Drop Manual Node</button>
+                    <button id="fillAreaBtn" class="btn btn-primary mt-2" style="display:none;">AI Auto-Plan Region</button>
+                    <button id="clearRoutersBtn" class="btn btn-danger-soft mt-2">Clear Map</button>
+                </div>
+
+                <div class="panel glass-panel">
+                    <h3>Hardware Settings</h3>
+                    <div class="form-group">
+                        <label>Frequency Core</label>
+                        <select id="freqSelect" class="form-control">
+                            <option value="2.4">2.4 GHz Band</option>
+                            <option value="5">5 GHz Band</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <label>Base TX Power</label>
+                        <input type="range" id="radiusSlider" min="100" max="1500" value="500" class="range-slider">
+                    </div>
+                </div>
+                
+                <div class="panel glass-panel">
+                    <h3>Network Coverage</h3>
+                    <div class="stat-row">Optimal Signal <span id="statOptimal" class="text-success">0%</span></div>
+                    <div class="stat-row">Weak Signal <span id="statWeak" class="text-warning">0%</span></div>
+                    <div class="stat-row">Interference <span id="statInterfere" class="text-danger">0%</span></div>
+                    <div class="stat-row">Dead Zone <span id="statDead" class="text-muted">100%</span></div>
+                    
+                    <div id="geoStatsPanel" class="mt-3" style="display:none;">
+                        <h4>Region Setup</h4>
+                        <div class="stat-row">Area <span id="statArea">0</span></div>
+                        <div class="stat-row">Perimeter <span id="statPerimeter">0</span></div>
+                    </div>
+                </div>
             </div>
-        </div>
+
+            <!-- Deployment View Panel -->
+            <div id="viewDeployment" class="view-panel" style="display: none;">
+                <div class="panel glass-panel primary-tint">
+                    <h3>Live Filter</h3>
+                    <p class="text-muted mb-2" style="font-size: 0.8rem;">Select which nodes to display on the map and ledger.</p>
+                    <div class="form-group">
+                        <select id="filterSelect" class="form-control shadow-sm">
+                            <option value="all">Show All Status</option>
+                            <option value="deployed">Deployed Nodes</option>
+                            <option value="pending">Undeployed (Pending)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="panel glass-panel">
+                    <h3>Deployment Stats</h3>
+                    <div class="stat-row mb-2">Total Planned <span id="sideTotalPlanned" class="font-bold">0</span></div>
+                    <div class="stat-row mb-2">To Deploy <span id="sideToDeploy" class="text-danger font-bold">0</span></div>
+                    <div class="stat-row">Completed <span id="sideCompleted" class="text-success font-bold">0</span></div>
+                    
+                    <div class="progress-bar-container mt-3">
+                        <div id="deploymentProgress" class="progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="map-view">
+                <div id="map"></div>
+                <div id="canvas-container"></div>
+                <!-- Premium glass overlay for map controls or branding could go here -->
+            </div>
+            
+            <div class="ledger-view">
+                <div class="ledger-header">
+                    <h2>Work Orders / Operations</h2>
+                    <div class="ledger-stats">
+                        <div class="stat-box">
+                            <span>Total Planned</span>
+                            <strong id="ledgerPlanned">0</strong>
+                        </div>
+                        <div class="stat-box">
+                            <span>Deployed</span>
+                            <strong id="ledgerDeployed" class="text-success">0</strong>
+                        </div>
+                        <div class="stat-box">
+                            <span>Pending</span>
+                            <strong id="ledgerRemaining" class="text-primary">0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-card glass-table mb-4">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Hardware ID</th>
+                                <th>Coordinates (Lat, Lng)</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="routerTableBody">
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">No planning data available.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <div id="canvas-container">
-        <div id="map"></div>
-    </div>
-
-    <!-- Leaflet & p5 Libraries -->
+    <!-- Libraries -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
     <script src="script.js"></script>
 </body>
-
 </html>
