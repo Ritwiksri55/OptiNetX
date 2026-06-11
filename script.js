@@ -28,7 +28,6 @@ let currentMouseLatLng = null;
 
 function setup() {
     let mapWrapper = document.querySelector('.map-view');
-    console.log(mapWrapper);
     let canvasWidth = mapWrapper.clientWidth;
     let canvasHeight = mapWrapper.clientHeight;
 
