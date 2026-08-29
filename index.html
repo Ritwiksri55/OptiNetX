@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiNetX - Workspace</title>
+    <!-- Standard realistic font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Premium Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+                </div>
+                <div>
+                    <h1>OptiNetX</h1>
+                    <p class="subtitle">Premium Network Planner</p>
+                </div>
+            </div>
+
+            <!-- Location Search -->
+            <div class="search-section">
+                <div class="search-input-wrapper">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search location or coordinates...">
+                    <button id="searchBtn" class="search-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="searchResults" class="search-results"></div>
+            </div>
+
+            <div class="nav-tabs">
+                <button id="tabPlanning" class="tab-btn active">Design Mode</button>
+                <button id="tabDeployment" class="tab-btn">Deployment</button>
+            </div>
+
+            <!-- Planning View Panel -->
+            <div id="viewPlanning" class="view-panel active">
+                <div class="panel glass-panel">
+                    <h3>Map Actions</h3>
+                    <div class="btn-group">
+                        <button id="modeDragBtn" class="btn btn-outline active">Pan Map</button>
+                        <button id="modeDrawBtn" class="btn btn-outline">Draw Region</button>
+                    </div>
+                    
+                    <hr class="soft-hr">
+
+                    <button id="addRouterBtn" class="btn btn-secondary mt-2">Drop Manual Node</button>
+                    <button id="fillAreaBtn" class="btn btn-primary mt-2" style="display:none;">AI Auto-Plan Region</button>
+                    <button id="clearRoutersBtn" class="btn btn-danger-soft mt-2">Clear All Routers</button>
+                    <button id="fullscreenBtn" class="btn btn-success mt-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                        </svg>
+                        Fullscreen Map
+                    </button>
+                </div>
+
+                <div class="panel glass-panel">
+                    <h3>Hardware Settings</h3>
+                    <div class="form-group">
+                        <label>Frequency Core</label>
+                        <select id="freqSelect" class="form-control">
+                            <option value="2.4">2.4 GHz Band</option>
+                            <option value="5">5 GHz Band</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <label>Base TX Power</label>
+                        <input type="range" id="radiusSlider" min="100" max="1500" value="500" class="range-slider">
+                        <div class="power-display">
+                            <span id="powerValue">500</span> units
+                        </div>
+                    </div>
+                    
+                    <div id="aiSuggestion" class="ai-suggestion" style="display:none;">
+                        <div class="ai-icon">🤖</div>
+                        <div class="ai-text" id="aiSuggestionText"></div>
+                    </div>
+                    
+                    <div id="aiAlternatives" class="ai-alternatives" style="display:none;">
+                        <div class="alt-title">💡 Better Alternatives:</div>
+                        <div id="aiAlternativesContent"></div>
+                    </div>
+                </div>
+                
+                <div class="panel glass-panel">
+                    <h3>Network Coverage</h3>
+                    <div class="stat-row">Optimal Signal <span id="statOptimal" class="text-success">0%</span></div>
+                    <div class="stat-row">Weak Signal <span id="statWeak" class="text-warning">0%</span></div>
+                    <div class="stat-row">Interference <span id="statInterfere" class="text-danger">0%</span></div>
+                    <div class="stat-row">Dead Zone <span id="statDead" class="text-muted">100%</span></div>
+                    
+                    <div id="geoStatsPanel" class="mt-3" style="display:none;">
+                        <h4>Region Setup</h4>
+                        <div class="stat-row">Area <span id="statArea">0</span></div>
+                        <div class="stat-row">Perimeter <span id="statPerimeter">0</span></div>
+                    </div>
+                </div>
+
+                <div class="panel glass-panel" id="routerListPanel" style="display:none;">
+                    <h3>Router List</h3>
+                    <div id="routerList" class="router-list"></div>
+                </div>
+            </div>
+
+            <!-- Deployment View Panel -->
+            <div id="viewDeployment" class="view-panel" style="display: none;">
+                <div class="panel glass-panel primary-tint">
+                    <h3>Live Filter</h3>
+                    <p class="text-muted mb-2" style="font-size: 0.8rem;">Select which nodes to display on the map and ledger.</p>
+                    <div class="form-group">
+                        <select id="filterSelect" class="form-control shadow-sm">
+                            <option value="all">Show All Status</option>
+                            <option value="deployed">Deployed Nodes</option>
+                            <option value="pending">Undeployed (Pending)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="panel glass-panel">
+                    <h3>Deployment Stats</h3>
+                    <div class="stat-row mb-2">Total Planned <span id="sideTotalPlanned" class="font-bold">0</span></div>
+                    <div class="stat-row mb-2">To Deploy <span id="sideToDeploy" class="text-danger font-bold">0</span></div>
+                    <div class="stat-row">Completed <span id="sideCompleted" class="text-success font-bold">0</span></div>
+                    
+                    <div class="progress-bar-container mt-3">
+                        <div id="deploymentProgress" class="progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="map-view">
+                <div id="map"></div>
+                <div id="canvas-container"></div>
+                
+                <!-- AI Info Box on Map -->
+                <div class="map-info-box">
+                    <div class="info-row">
+                        <span class="info-label">Routers:</span>
+                        <span class="info-value" id="mapRouterCount">0</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Coverage:</span>
+                        <span class="info-value text-success" id="mapCoverage">0%</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Interference:</span>
+                        <span class="info-value text-danger" id="mapInterference">0%</span>
+                    </div>
+                </div>
+                
+                <!-- Fullscreen Controls Panel -->
+                <div id="fullscreenControls" class="fullscreen-controls" style="display:none;">
+                    <button id="fsDrawAreaBtn" class="fs-btn fs-btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 2 19 12 15 22 19 12 2"></polygon>
+                        </svg>
+                        Draw Region
+                    </button>
+                    <button id="fsAddRouterBtn" class="fs-btn fs-btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M12 1v6m0 6v6m6-12h-6m0 6h-6m0 0h6"/>
+                        </svg>
+                        Drop Manual Node
+                    </button>
+                    <button id="fsFillAreaBtn" class="fs-btn fs-btn-success" style="display:none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5"></path>
+                            <path d="M2 12l10 5 10-5"></path>
+                        </svg>
+                        AI Optimal Plan
+                    </button>
+                    <button id="fsClearRoutersBtn" class="fs-btn fs-btn-danger">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Clear All
+                    </button>
+                    
+                    <!-- AI Suggestions in Fullscreen -->
+                    <div id="fsAiSuggestion" class="fs-ai-suggestion" style="display:none;">
+                        <div class="fs-ai-icon">🤖</div>
+                        <div class="fs-ai-text" id="fsAiSuggestionText"></div>
+                    </div>
+                    
+                    <div id="fsAiAlternatives" class="fs-ai-alternatives" style="display:none;">
+                        <div class="fs-alt-title">💡 Alternatives:</div>
+                        <div id="fsAiAlternativesContent"></div>
+                    </div>
+                </div>
+                
+                <!-- Exit Fullscreen Button (hidden by default) -->
+                <button id="exitFullscreenBtn" class="exit-fullscreen-btn" style="display:none;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+                    </svg>
+                    Exit Fullscreen
+                </button>
+            </div>
+            
+            <div class="ledger-view">
+                <div class="ledger-header">
+                    <h2>Work Orders / Operations</h2>
+                    <div class="ledger-stats">
+                        <div class="stat-box">
+                            <span>Total Planned</span>
+                            <strong id="ledgerPlanned">0</strong>
+                        </div>
+                        <div class="stat-box">
+                            <span>Deployed</span>
+                            <strong id="ledgerDeployed" class="text-success">0</strong>
+                        </div>
+                        <div class="stat-box">
+                            <span>Pending</span>
+                            <strong id="ledgerRemaining" class="text-primary">0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-card glass-table mb-4">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Hardware ID</th>
+                                <th>Coordinates (Lat, Lng)</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="routerTableBody">
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">No planning data available.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Libraries -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

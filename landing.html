@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiNetX - Premium Network Planner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Scroll snap for smooth section navigation */
+        .scroll-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .scroll-section {
+            height: 100vh;
+            scroll-snap-align: start;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Header Navigation */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            z-index: 1000;
+            background: rgba(255, 167, 38, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            background: #FF6B35;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: white;
+            stroke-width: 2.5;
+        }
+
+        .brand-name {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #2d3748;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #4a5568;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #FF6B35;
+        }
+
+        .creator-credit {
+            font-weight: 700;
+            color: #2d3748;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .creator-credit:hover {
+            background: rgba(255, 255, 255, 0.5);
+            color: #FF6B35;
+        }
+
+        /* Main Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #bb7103 0%, #FFB74D 50%, #8e5602 100%);
+            padding-top: 80px;
+        }
+
+        .main-content {
+            display: flex;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            padding: 0 60px;
+            max-width: 1600px;
+            margin: 0 auto;
+            gap: 80px;
+        }
+
+        .left-section {
+            flex: 0 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .illustration-section {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Info Card */
+        .info-card {
+            background: rgb(235, 200, 165);
+            border-radius: 32px;
+            padding: 32px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.12);
+            max-width: 550px;
+            position: relative;
+            animation: slideInLeft 1s ease;
+            z-index: 5;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .card-logo {
+            width: 56px;
+            height: 34px;
+            background: linear-gradient(135deg, #FF6B35, #FF8C42);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .card-logo svg {
+            width: 32px;
+            height: 32px;
+            stroke: white;
+            stroke-width: 2.5;
+        }
+
+        .info-card h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #1a202c;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .info-card p {
+            font-size: 1.05rem;
+            color: #4a5568;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        .features-list {
+            margin-bottom: 36px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        .feature-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #FF6B35, #FF8C42);
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 12px;
+            text-decoration: none;
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.35);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(255, 107, 53, 0.45);
+        }
+
+        /* Illustration Placeholder */
+        .illustration {
+            width: 100%;
+            max-width: 700px;
+            height: 550px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: visible;
+            animation: fadeIn 1.2s ease;
+        }
+
+        .illustration-image {
+            width: 200%;
+            height: 100%;
+            object-fit: contain;
+            position: relative;
+            z-index: 1;
+        }
+
+        .creator-badge {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 107, 53, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 14px 28px;
+            border-radius: 50px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            animation: slideUp 1s ease 1.5s both;
+            z-index: 100;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .creator-text {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .creator-name {
+            font-size: 1.1rem;
+            color: white;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Remove old illustration styles */
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="brand-header">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                    <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                    <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                </svg>
+            </div>
+            <span class="brand-name">OptiNetX</span>
+        </div>
+        <nav class="nav-menu">
+            <a href="#hero" class="nav-link">Home</a>
+            <a href="#why" class="nav-link">Why OptiNetX?</a>
+            <a href="#installation" class="nav-link">Installation</a>
+            <a href="#learn" class="nav-link">Learn</a>
+            <a href="#footer" class="nav-link creator-credit">Made by RITWIK KUMAR</a>
+        </nav>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="scroll-section hero-section">
+        <div class="main-content">
+            <div class="info-card">
+                <div class="card-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                        <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                    </svg>
+                </div>
+                
+                <h1>OptiNetX</h1>
+                <p>Connect, capture, and keep more customers with an all-in-one WiFi network planning platform</p>
+                
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <span>AI-powered auto-planning</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <span>Real-time coverage simulation</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <span>Dead zones optimization</span>
+                    </div>
+                </div>
+                
+                <a href="index.html" class="cta-button">Launch Workspace →</a>
+            </div>
+
+            <div class="illustration">
+                <img src="Screenshot_27-8-2026_132030_dribbble.com.jpeg" alt="OptiNetX Illustration" class="illustration-image">
+                <div class="creator-badge">
+                    <span class="creator-text">Made by</span>
+                    <span class="creator-name">RITWIK KUMAR</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Why OptiNetX Section -->
+    <section id="why" class="scroll-section why-section">
+        <div class="section-container">
+                <h2 class="section-title">Why OptiNetX?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>AI-Powered Planning</h3>
+                        <p>Advanced algorithms automatically calculate optimal router placement for maximum coverage and minimal interference.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Real-Time Analysis</h3>
+                        <p>Visualize signal strength, coverage zones, and interference patterns in real-time with interactive heatmaps.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🗺️</div>
+                        <h3>Satellite Mapping</h3>
+                        <p>Plan deployments on actual satellite imagery with street labels for accurate real-world implementation.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Zero Dead Zones</h3>
+                        <p>Hexagonal grid optimization ensures complete coverage with no signal dead spots in your deployment area.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>Multi-Frequency Support</h3>
+                        <p>Plan for both 2.4 GHz and 5 GHz networks with frequency-specific coverage calculations.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💼</div>
+                        <h3>Professional Deployment</h3>
+                        <p>Track deployment status, manage work orders, and maintain detailed hardware inventory.</p>
+                    </div>
+                </div>
+            </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section id="installation" class="scroll-section installation-section">
+            <div class="section-container">
+                <h2 class="section-title">Installation Guide</h2>
+                <div class="installation-steps">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h3>Download OptiNetX</h3>
+                        <p>Clone or download the OptiNetX repository from the source.
+                        <code class="code-block">git clone https://github.com/Ritwiksri55/
+                            optinetx.git</code></p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3>Open Project</h3>
+                        <p>Navigate to the project folder and open <code>landing.html</code> in your browser.</p>
+                        <code class="code-block">cd optinetx<br>open landing.html</code>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h3>Start Planning</h3>
+                        <p>Click "Launch Workspace" to access the network planning tool. No installation required!</p>
+                    </div>
+                </div>
+        </section>
+
+        <!-- Learn Section -->
+        <section id="learn" class="scroll-section learn-section">
+            <div class="section-container">
+                <h2 class="section-title">Learn OptiNetX</h2>
+                <div class="learn-grid">
+                    <div class="learn-card">
+                        <h3>🎨 Design Mode</h3>
+                        <p><strong>Draw Coverage Areas:</strong> Click "Draw Region" and mark the area you want to cover on the map.</p>
+                        <p><strong>Manual Placement:</strong> Use "Drop Manual Node" to place routers individually.</p>
+                        <p><strong>AI Auto-Plan:</strong> Let the AI automatically calculate optimal router placement.</p>
+                    </div>
+                    <div class="learn-card">
+                        <h3>⚙️ Hardware Settings</h3>
+                        <p><strong>Frequency Selection:</strong> Choose between 2.4 GHz (longer range) or 5 GHz (faster speed).</p>
+                        <p><strong>TX Power:</strong> Adjust transmission power to simulate different router models.</p>
+                    </div>
+                    <div class="learn-card">
+                        <h3>📊 Coverage Analysis</h3>
+                        <p><strong>Green Zones:</strong> Optimal signal strength</p>
+                        <p><strong>Orange Zones:</strong> Weak but usable signal</p>
+                        <p><strong>Red Zones:</strong> Interference from overlapping routers</p>
+                        <p><strong>No Color:</strong> Dead zones with no coverage</p>
+                    </div>
+                    <div class="learn-card">
+                        <h3>🚀 Deployment Mode</h3>
+                        <p><strong>Track Progress:</strong> Monitor deployed vs pending routers.</p>
+                        <p><strong>Filter View:</strong> Show only deployed or pending nodes.</p>
+                        <p><strong>Work Orders:</strong> Manage deployment tasks in the operations table.</p>
+                    </div>
+                </div>
+        </section>
+
+    <!-- Footer -->
+    <footer id="footer" class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                        <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                    </svg>
+                </div>
+                <span>OptiNetX</span>
+            </div>
+            <div class="footer-credit">
+                <p>Developed by <strong>RITWIK KUMAR</strong></p>
+                <p class="footer-year">© 2026 OptiNetX - Premium Network Planning Solution</p>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        /* Content Sections */
+        .content-sections {
+            width: 100%;
+        }
+
+        .content-section {
+            padding: 100px 40px;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .why-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .installation-section {
+            background: linear-gradient(135deg, #fff5f0 0%, #ffe8d9 100%);
+        }
+
+        .learn-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1a202c;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        /* Installation Steps */
+        .installation-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .step-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #FF6B35, #FF8C42);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .step-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            display: block;
+            background: #2d3748;
+            color: #68d391;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        .requirements {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .requirements h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 15px;
+        }
+
+        .requirements ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .requirements li {
+            padding: 8px 0;
+            color: #4a5568;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .requirements li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        /* Learn Grid */
+        .learn-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .learn-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .learn-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 15px;
+        }
+
+        .learn-card p {
+            color: #4a5568;
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+
+        .learn-card strong {
+            color: #2d3748;
+        }
+
+        .tips-section {
+            background: linear-gradient(135deg, #FF6B35, #FF8C42);
+            padding: 40px;
+            border-radius: 16px;
+            color: white;
+        }
+
+        .tips-section h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .tips-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tips-section li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .tips-section li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a202c;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .footer-brand .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #FF6B35, #FF8C42);
+        }
+
+        .footer-credit p {
+            margin: 8px 0;
+            font-size: 1rem;
+        }
+
+        .footer-credit strong {
+            color: #FF8C42;
+            font-weight: 800;
+        }
+
+        .footer-year {
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Scroll padding for fixed header */
+        section {
+            scroll-margin-top: 80px;
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            z-index: 10;
+        }
+
+        .scroll-indicator svg {
+            width: 30px;
+            height: 30px;
+            stroke: white;
+            stroke-width: 2;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+    </style>
+</body>
+</html>

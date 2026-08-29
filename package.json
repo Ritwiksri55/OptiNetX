@@ -1,0 +1,30 @@
+{
+  "name": "optinetx-network-planner",
+  "version": "1.0.0",
+  "description": "Professional WiFi/IoT network planning tool with AI-powered optimization",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8000 -o landing.html",
+    "dev": "http-server -p 8000 -o landing.html",
+    "deploy:vercel": "vercel --prod",
+    "deploy:netlify": "netlify deploy --prod"
+  },
+  "keywords": [
+    "network-planning",
+    "wifi",
+    "router",
+    "optimization",
+    "mapping",
+    "coverage",
+    "AI"
+  ],
+  "author": "RITWIK KUMAR",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/optinetx"
+  }
+}
