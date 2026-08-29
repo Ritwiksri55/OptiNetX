@@ -40,37 +40,6 @@ project/
 - **Vanilla JavaScript** - Core application logic
 - **CSS3** - Modern UI with glassmorphism effects
 
-## 📦 Deployment Options
-
-### Option 1: Vercel (Recommended)
-1. Install Vercel CLI: `npm install -g vercel`
-2. Navigate to project folder
-3. Run: `vercel`
-4. Follow prompts to deploy
-
-### Option 2: Netlify
-1. Install Netlify CLI: `npm install -g netlify-cli`
-2. Navigate to project folder
-3. Run: `netlify deploy`
-4. For production: `netlify deploy --prod`
-
-### Option 3: GitHub Pages
-1. Create a new GitHub repository
-2. Push project files to the repository
-3. Go to Settings > Pages
-4. Select branch and root folder
-5. Save and get your URL
-
-### Option 4: Simple HTTP Server (Local Testing)
-```bash
-# Using Python
-python -m http.server 8000
-
-# Using Node.js
-npx http-server -p 8000
-```
-
-Then visit: `http://localhost:8000/landing.html`
 
 ## 🚀 Quick Start (Local)
 
