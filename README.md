@@ -14,10 +14,6 @@ Professional WiFi/IoT network planning tool with AI-powered optimization, intera
 - **AI Suggestions**: Smart alternatives for optimizing coverage
 - **Dark Techie UI**: Modern glassmorphism design with neon accents
 
-## 🌐 Live Demo
-
-Access the application at: `[Your Deployment URL]`
-
 ## 📁 Project Structure
 
 ```
@@ -71,14 +67,4 @@ Edit `script.js` line ~40 to change default location:
 - Power Range: 100-1500 units
 - Coverage calculation optimized for zero dead zones
 
-## 🐛 Known Issues
 
-- None currently reported
-
-## 📞 Support
-
-For issues or questions, please contact the developer.
-
----
-
-**Note**: This application requires an active internet connection for map tiles and location search functionality.
